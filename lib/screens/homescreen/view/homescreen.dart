@@ -29,12 +29,13 @@ class _HomeScreenViewState extends State<HomeScreenView> {
     ProfileScreen(), // Profile Screen
   ];
 
-  @override
-  void initState() {
-    super.initState();
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
     Provider.of<HomeScreenViewModel>(context, listen: false).fetchProducts();
-  }
-
+  });
+}
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
