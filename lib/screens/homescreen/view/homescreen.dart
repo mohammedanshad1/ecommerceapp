@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
 import 'package:innoitlabsmachintest/core/constants/app_typography.dart';
 import 'package:innoitlabsmachintest/core/utils/responsive.dart';
 import 'package:innoitlabsmachintest/screens/cartscreen/view/cartscreen_view.dart';
 import 'package:innoitlabsmachintest/screens/favouritescreen/view/favouritescreen_view.dart';
 import 'package:innoitlabsmachintest/screens/homescreen/model/homescreen_model.dart';
 import 'package:innoitlabsmachintest/screens/productdetailscreen/view/productdetailscreen_view.dart';
+import 'package:innoitlabsmachintest/screens/productdetailscreen/viewmodel/productview_viewmodel.dart';
 import 'package:innoitlabsmachintest/screens/profilescreen/view/profilescreen_view.dart';
 import 'package:innoitlabsmachintest/shared/bottom_navbar.dart';
+import 'package:innoitlabsmachintest/widgets/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:innoitlabsmachintest/screens/homescreen/viewmodel/homescreen_viewmodel.dart';
 
@@ -29,42 +32,41 @@ class _HomeScreenViewState extends State<HomeScreenView> {
   @override
   void initState() {
     super.initState();
-    // Fetch products when the screen initializes (for the home screen)
     Provider.of<HomeScreenViewModel>(context, listen: false).fetchProducts();
   }
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive; // Access responsive instance
-
+    final responsive = context.responsive;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _getAppBarTitle(), // Set the app bar title based on the current screen
+          _getAppBarTitle(),
           style: appTypography.bold.copyWith(fontSize: responsive.sp(18)),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.filter_list),
-            onPressed: () {
-              _showFilterOptions(context); // Show filter options on tap
-            },
-          ),
-        ],
+        actions: _currentIndex == 0 // Show filter icon only on Home screen
+            ? [
+                IconButton(
+                  icon: Icon(Icons.filter_list),
+                  onPressed: () {
+                    _showFilterOptions(context); // Show filter options
+                  },
+                ),
+              ]
+            : [], // Empty list when not on the Home screen
       ),
-      body: _screens[_currentIndex], // Show current screen based on index
+      body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
-            _currentIndex = index; // Update the current index on tap
+            _currentIndex = index;
           });
         },
       ),
     );
   }
 
-  // Set different titles based on the selected screen
   String _getAppBarTitle() {
     switch (_currentIndex) {
       case 1:
@@ -74,24 +76,23 @@ class _HomeScreenViewState extends State<HomeScreenView> {
       case 3:
         return "Profile";
       default:
-        return "Home"; // Default title for Home
+        return "Home";
     }
   }
 }
 
-// New Home Content widget to display products
 class HomeContent extends StatefulWidget {
   @override
   _HomeContentState createState() => _HomeContentState();
 }
 
 class _HomeContentState extends State<HomeContent> {
-  String _searchQuery = ''; // Track the search query
+  String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
-    _searchController.dispose(); // Dispose the controller
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -101,7 +102,6 @@ class _HomeContentState extends State<HomeContent> {
 
     return Column(
       children: [
-        // Search bar only in HomeContent
         Padding(
           padding: EdgeInsets.symmetric(
               horizontal: responsive.wp(4), vertical: responsive.hp(2)),
@@ -109,9 +109,9 @@ class _HomeContentState extends State<HomeContent> {
             controller: _searchController,
             onChanged: (value) {
               setState(() {
-                _searchQuery = value.toLowerCase(); // Update search query
+                _searchQuery = value.toLowerCase();
               });
-              // Call the search function in the ViewModel
+
               Provider.of<HomeScreenViewModel>(context, listen: false)
                   .searchProducts(_searchQuery);
             },
@@ -132,7 +132,6 @@ class _HomeContentState extends State<HomeContent> {
               return Center(child: CircularProgressIndicator());
             }
 
-            // Filter products based on search query
             final filteredProducts = viewModel.products.where((product) {
               return product.title.toLowerCase().contains(_searchQuery);
             }).toList();
@@ -172,7 +171,8 @@ class _HomeContentState extends State<HomeContent> {
                   child: Stack(
                     children: [
                       Card(
-                        elevation: 3,
+                        elevation:
+                            5, // Increase the elevation for a more prominent look
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(responsive.wp(3)),
                         ),
@@ -237,6 +237,32 @@ class _HomeContentState extends State<HomeContent> {
                         ),
                       ),
                       // Add Cart Icon in the top right corner
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius:
+                              responsive.wp(6), // Adjust the size of the icon
+                          child: IconButton(
+                            icon: Icon(Icons.shopping_cart),
+                            color: Colors.green,
+                            onPressed: () {
+                              Provider.of<ProductViewModel>(context,
+                                      listen: false)
+                                  .addToCart(
+                                      product.id); // Add product to the cart
+                              CustomSnackBar.show(
+                                context,
+                                snackBarType: SnackBarType.success,
+                                label: "Added to Favorites Successfully",
+                                bgColor: Colors
+                                    .green, // You can customize this as needed
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -259,8 +285,11 @@ void _showFilterOptions(BuildContext context) {
           mainAxisSize: MainAxisSize.min,
           children: Category.values.map((category) {
             return ListTile(
-              title: Text(toCamelCase(
-                  categoryValues.reverse[category]!)), // Convert to camel case
+              title: Text(
+                toCamelCase(categoryValues.reverse[category]!),
+                style: appTypography.regular
+                    .copyWith(fontSize: (17), color: Colors.black),
+              ), // Convert to camel case
               onTap: () {
                 Navigator.pop(context); // Close the bottom sheet
                 Provider.of<HomeScreenViewModel>(context, listen: false)

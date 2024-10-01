@@ -10,7 +10,19 @@ class HomeScreenViewModel with ChangeNotifier {
 
   List<Products> get products => _filteredProducts.isEmpty ? _products : _filteredProducts;
   bool get loading => _loading;
+ List<int> _cartItems = []; // Store product IDs in the cart
 
+  List<int> get cartItems => _cartItems;
+
+  void addToCart(int productId) {
+    _cartItems.add(productId);
+    notifyListeners();
+  }
+
+  void removeFromCart(int productId) {
+    _cartItems.remove(productId);
+    notifyListeners();
+  }
   // Fetch products from the API
   Future<void> fetchProducts() async {
     final url = Uri.parse('https://fakestoreapi.com/products');
