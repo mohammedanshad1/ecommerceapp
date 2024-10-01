@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:innoitlabsmachintest/core/constants/app_typography.dart';
 import 'package:innoitlabsmachintest/core/utils/responsive.dart';
 
-
 class CustomButton extends StatelessWidget {
   final String buttonName;
   final VoidCallback onTap;
@@ -36,11 +35,11 @@ class CustomButton extends StatelessWidget {
         ),
         child: Text(
           buttonName,
-          style:   appTypography.regular
-                                        .copyWith(fontSize: responsive.sp(16)), // Adjust the font size as needed
-          ),
+          style: appTypography.regular.copyWith(
+              fontSize: responsive.sp(16),
+              color: Colors.white), // Adjust the font size as needed
         ),
-    
+      ),
     );
   }
 }
