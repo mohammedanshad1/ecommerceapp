@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:innoitlabsmachintest/screens/productdetailscreen/viewmodel/productview_viewmodel.dart';
+import 'package:provider/provider.dart';
 import 'package:innoitlabsmachintest/core/constants/app_typography.dart';
 import 'package:innoitlabsmachintest/core/utils/responsive.dart';
 import 'package:innoitlabsmachintest/screens/homescreen/model/homescreen_model.dart';
 import 'package:innoitlabsmachintest/widgets/custom_button.dart';
+import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart'; // Import the snackbar package
+import 'package:innoitlabsmachintest/widgets/custom_snackbar.dart'; // Ensure you have the correct path for your CustomSnackBar
 
 class ProductDetailScreen extends StatelessWidget {
   final Products product;
@@ -12,7 +16,7 @@ class ProductDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive; // Access responsive instance
+    final responsive = context.responsive;
 
     return Scaffold(
       appBar: AppBar(
@@ -24,7 +28,7 @@ class ProductDetailScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Handle add to cart functionality here
+              // Navigate to cart screen or handle cart functionality here
             },
           ),
         ],
@@ -71,21 +75,35 @@ class ProductDetailScreen extends StatelessWidget {
           children: [
             CustomButton(
               buttonName: "Favorite",
-              onTap: () {
-                // Handle favorite functionality here
+              onTap: () async {
+                await Provider.of<ProductViewModel>(context, listen: false)
+                    .addToFavorites(product.id);
+                CustomSnackBar.show(
+                  context,
+                  snackBarType: SnackBarType.success,
+                  label: "Added to Favorites Successfully",
+                  bgColor: Colors.green, // You can customize this as needed
+                );
               },
-              buttonColor: Colors.red, // Set the button color to red
+              buttonColor: Colors.red,
               height: responsive.hp(7),
-              width: responsive.wp(45), // Adjust width as needed
+              width: responsive.wp(45),
             ),
             CustomButton(
               buttonName: "Add to Cart",
-              onTap: () {
-                // Handle add to cart functionality here
+              onTap: () async {
+                await Provider.of<ProductViewModel>(context, listen: false)
+                    .addToCart(product.id as int);
+                CustomSnackBar.show(
+                  context,
+                  snackBarType: SnackBarType.success,
+                  label: "Added to Cart Successfully",
+                  bgColor: Colors.green, // You can customize this as needed
+                );
               },
-              buttonColor: Colors.green, // Set the button color to green
+              buttonColor: Colors.green,
               height: responsive.hp(7),
-              width: responsive.wp(45), // Adjust width as needed
+              width: responsive.wp(45),
             ),
           ],
         ),
