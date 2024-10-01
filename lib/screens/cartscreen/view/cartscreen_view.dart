@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:innoitlabsmachintest/core/constants/app_typography.dart';
 import 'package:innoitlabsmachintest/screens/homescreen/viewmodel/homescreen_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:innoitlabsmachintest/screens/productdetailscreen/viewmodel/productview_viewmodel.dart';
@@ -11,7 +12,10 @@ class CartScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Your Cart"),
+        title: Text(
+          "Your Cart",
+          style: appTypography.bold.copyWith(fontSize: (18)),
+        ),
       ),
       body: cartItems.isEmpty
           ? Center(child: Text('No items in the cart.'))
@@ -19,7 +23,8 @@ class CartScreen extends StatelessWidget {
               itemCount: cartItems.length,
               itemBuilder: (context, index) {
                 final productId = cartItems[index];
-                final product = products.firstWhere((prod) => prod.id == productId);
+                final product =
+                    products.firstWhere((prod) => prod.id == productId);
 
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -75,7 +80,8 @@ class CartScreen extends StatelessWidget {
                         right: 8,
                         child: GestureDetector(
                           onTap: () {
-                            Provider.of<ProductViewModel>(context, listen: false)
+                            Provider.of<ProductViewModel>(context,
+                                    listen: false)
                                 .removeFromCart(productId);
                           },
                           child: Icon(Icons.close, color: Colors.red),

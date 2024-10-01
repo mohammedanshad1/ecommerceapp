@@ -10,16 +10,17 @@ class FavoritesScreen extends StatelessWidget {
     final products = Provider.of<HomeScreenViewModel>(context).products;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Your Favorites"),
-      ),
+      // appBar: AppBar(
+      //   title: Text("Your Favorites"),
+      // ),
       body: favoriteItems.isEmpty
           ? Center(child: Text('No favorite products.'))
           : ListView.builder(
               itemCount: favoriteItems.length,
               itemBuilder: (context, index) {
                 final productId = favoriteItems[index];
-                final product = products.firstWhere((prod) => prod.id == productId);
+                final product =
+                    products.firstWhere((prod) => prod.id == productId);
 
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -75,7 +76,8 @@ class FavoritesScreen extends StatelessWidget {
                         right: 8,
                         child: GestureDetector(
                           onTap: () {
-                            Provider.of<ProductViewModel>(context, listen: false)
+                            Provider.of<ProductViewModel>(context,
+                                    listen: false)
                                 .removeFromFavorites(productId);
                           },
                           child: Icon(Icons.close, color: Colors.red),

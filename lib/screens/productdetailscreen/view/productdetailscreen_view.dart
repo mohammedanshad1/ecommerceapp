@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:innoitlabsmachintest/screens/cartscreen/view/cartscreen_view.dart';
 import 'package:innoitlabsmachintest/screens/productdetailscreen/viewmodel/productview_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:innoitlabsmachintest/core/constants/app_typography.dart';
@@ -28,7 +29,8 @@ class ProductDetailScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              // Navigate to cart screen or handle cart functionality here
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CartScreen()));
             },
           ),
         ],
